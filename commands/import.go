@@ -5,11 +5,11 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/activecm/rita/config"
-	"github.com/activecm/rita/parser"
-	"github.com/activecm/rita/pkg/remover"
-	"github.com/activecm/rita/resources"
-	"github.com/activecm/rita/util"
+	"github.com/activecm/rita-legacy/config"
+	"github.com/activecm/rita-legacy/parser"
+	"github.com/activecm/rita-legacy/pkg/remover"
+	"github.com/activecm/rita-legacy/resources"
+	"github.com/activecm/rita-legacy/util"
 	log "github.com/sirupsen/logrus"
 	"github.com/urfave/cli"
 )
@@ -56,7 +56,7 @@ type (
 	}
 )
 
-//NewImporter ....
+// NewImporter ....
 func NewImporter(c *cli.Context) *Importer {
 	return &Importer{
 		configFile:      getConfigFilePath(c),
@@ -69,7 +69,7 @@ func NewImporter(c *cli.Context) *Importer {
 	}
 }
 
-//parseArgs handles parsing the positional import arguments
+// parseArgs handles parsing the positional import arguments
 func (i *Importer) parseArgs() error {
 	if len(i.args) < 2 {
 		return cli.NewExitError("\n\t[!] Both <files/directory to import> and <database name> are required.", -1)
@@ -232,9 +232,12 @@ func (i *Importer) run() error {
 	}
 	i.res.Config.S.Rolling = rollingCfg
 
-	importer := parser.NewFSImporter(i.res)
+	importer, err := parser.NewFSImporter(i.res)
 	if len(importer.GetInternalSubnets()) == 0 {
 		return cli.NewExitError("Internal subnets are not defined. Please set the InternalSubnets section of the config file.", -1)
+	}
+	if err != nil {
+		return cli.NewExitError(fmt.Errorf("error creating new file system importer: %v", err.Error()), -1)
 	}
 
 	indexedFiles := importer.CollectFileDetails(i.importFiles, i.threads)
