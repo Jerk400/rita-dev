@@ -1,4 +1,7 @@
-# RITA (Real Intelligence Threat Analytics)
+> :exclamation: **Important Notice** :exclamation:
+> This repository has been archived and is no longer maintained. The project has undergone a complete rewrite and significant improvements. The new version of this project can be found [here](https://github.com/activecm/rita).
+
+# RITA (Real Intelligence Threat Analytics) (Legacy)
 
 [![RITA Logo](rita-logo.png)](https://www.activecountermeasures.com/free-tools/rita/)
 
@@ -23,7 +26,7 @@ Please see our recommended [System Requirements](docs/System%20Requirements.md) 
 
 RITA provides an install script that works on Ubuntu 20.04 LTS, Debian 11, Security Onion, and CentOS 7.
 
-Download the latest `install.sh` file [here](https://github.com/activecm/rita/releases/latest) and make it executable: `chmod +x ./install.sh`
+Download the latest `install.sh` file [here](https://github.com/activecm/rita-legacy/releases/latest) and make it executable: `chmod +x ./install.sh`
 
 Then choose one of the following install methods:
 
@@ -129,6 +132,7 @@ RITA cycles data into and out of rolling databases in "chunks". You can think of
       * `show-bl-hostnames`: Print blacklisted hostnames which received connections
       * `show-bl-source-ips`: Print blacklisted IPs which initiated connections
       * `show-bl-dest-ips`: Print blacklisted IPs which received connections
+      * `show-dns-fqdn-ips`: Print IPs associated with a specified FQDN
       * `show-exploded-dns`:  Print dns analysis. Exposes covert dns channels
       * `show-long-connections`: Print long connections and relevant information
       * `show-strobes`: Print connections which occurred with excessive frequency
