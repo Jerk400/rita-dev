@@ -8,26 +8,26 @@ import (
 	"sync"
 	"time"
 
-	"github.com/activecm/rita/config"
-	"github.com/activecm/rita/database"
-	"github.com/activecm/rita/parser/files"
-	"github.com/activecm/rita/parser/parsetypes"
-	"github.com/activecm/rita/pkg/beacon"
-	"github.com/activecm/rita/pkg/beaconproxy"
-	"github.com/activecm/rita/pkg/beaconsni"
-	"github.com/activecm/rita/pkg/blacklist"
-	"github.com/activecm/rita/pkg/certificate"
-	"github.com/activecm/rita/pkg/data"
-	"github.com/activecm/rita/pkg/explodeddns"
-	"github.com/activecm/rita/pkg/host"
-	"github.com/activecm/rita/pkg/hostname"
-	"github.com/activecm/rita/pkg/remover"
-	"github.com/activecm/rita/pkg/sniconn"
-	"github.com/activecm/rita/pkg/uconn"
-	"github.com/activecm/rita/pkg/uconnproxy"
-	"github.com/activecm/rita/pkg/useragent"
-	"github.com/activecm/rita/resources"
-	"github.com/activecm/rita/util"
+	"github.com/activecm/rita-legacy/config"
+	"github.com/activecm/rita-legacy/database"
+	"github.com/activecm/rita-legacy/parser/files"
+	"github.com/activecm/rita-legacy/parser/parsetypes"
+	"github.com/activecm/rita-legacy/pkg/beacon"
+	"github.com/activecm/rita-legacy/pkg/beaconproxy"
+	"github.com/activecm/rita-legacy/pkg/beaconsni"
+	"github.com/activecm/rita-legacy/pkg/blacklist"
+	"github.com/activecm/rita-legacy/pkg/certificate"
+	"github.com/activecm/rita-legacy/pkg/data"
+	"github.com/activecm/rita-legacy/pkg/explodeddns"
+	"github.com/activecm/rita-legacy/pkg/host"
+	"github.com/activecm/rita-legacy/pkg/hostname"
+	"github.com/activecm/rita-legacy/pkg/remover"
+	"github.com/activecm/rita-legacy/pkg/sniconn"
+	"github.com/activecm/rita-legacy/pkg/uconn"
+	"github.com/activecm/rita-legacy/pkg/uconnproxy"
+	"github.com/activecm/rita-legacy/pkg/useragent"
+	"github.com/activecm/rita-legacy/resources"
+	"github.com/activecm/rita-legacy/util"
 
 	"github.com/globalsign/mgo/bson"
 	"github.com/pbnjay/memory"
@@ -55,17 +55,23 @@ type (
 )
 
 // NewFSImporter creates a new file system importer
-func NewFSImporter(res *resources.Resources) *FSImporter {
+func NewFSImporter(res *resources.Resources) (*FSImporter, error) {
 	// set batchSize to the max of 4GB or a half of system RAM to prevent running out of memory while importing
 	batchSize := int64(util.MaxUint64(4*(1<<30), (memory.TotalMemory() / 2)))
+	newFilter, err := newFilter(res.Config)
+
+	if err != nil {
+		return &FSImporter{}, err
+	}
+
 	return &FSImporter{
-		filter:         newFilter(res.Config),
+		filter:         newFilter,
 		log:            res.Log,
 		config:         res.Config,
 		database:       res.DB,
 		metaDB:         res.MetaDB,
 		batchSizeBytes: batchSize,
-	}
+	}, nil
 }
 
 var trustedAppReferenceList = [...]trustedAppTiplet{
